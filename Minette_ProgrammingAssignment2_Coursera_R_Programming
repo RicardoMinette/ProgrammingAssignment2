@@ -1,0 +1,50 @@
+# function to build a list of functions that will be able to manage a matrix inverse computation.
+# These functions will be used in other function to calculate the inverse: if there no calculated inverse, it will be done
+# otherwise, the function will return the stored value in the cache.
+
+makeCacheMatrix <- function (input=matrix()){
+	inverter<-NULL
+	
+	# function used to change value in the inner environment to set 
+	# attribute the input value to x and know that there is not an 
+	# inverted matrix (inverter<<- NULL) in the cache.
+	setInverter<- function(y){
+		input<<-y
+		inverter<<-NULL
+	}
+	# function that attributes value to x different than inverter
+	get<-function()input
+	# set the variable inverter with the value in the cache
+	setInversion<-function(invertion)inverter<<-invertion
+	# attribute the inverted matrix to the value of the variable inverter
+	getInversion<-function()inverter
+	# the last statment of the function defines the list of functions that is
+	# returned and their names
+	list(get=get,setInverter=setInverter,
+			setInversion=setInversion,getInversion=getInversion)
+}
+
+# function to evaluate if the the matrix is inverted or calculate the inverse
+cacheSolve<-function(input,...){
+	#this line makes the attribuition based on the valeu in the cache 
+	
+	inverter<-input$getInversion()
+	
+	# if this value is not null, it means the cache have something stored
+	if(!is.null(inverter)){
+		message("Value got from cache!")
+		return(inverter)
+		# and then the function finishes here
+	}
+	#otherwise, if getInverton does not return a value, the function
+	# has to calculate it. First, we get the input matrix
+	data<-input$get()
+	# and calculate the inverse using the function solve()
+	inverter<-solve(data,...)
+	# know we set the calculated value to the variable inverter using the function
+	# setInvertion. this will also "send" the calculated value to the cache.
+	input$setInversion(inverter)
+	inverter
+	
+	
+}
